@@ -4,9 +4,15 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const mockUsers = [
-    { id: 1, username: 'manu', displayName: 'Manuela Gomez' },
-    { id: 2, username: 'juli', displayName: 'Juliana Puerta' },
-    { id: 3, username: 'caro', displayName: 'Carolina Rojas' }
+    { id: 1, username: 'manug', displayName: 'Manuela Gomez' },
+    { id: 2, username: 'julip', displayName: 'Juliana Puerta' },
+    { id: 3, username: 'caror', displayName: 'Carolina Rojas' },
+    { id: 4, username: 'malu', displayName: 'Luisa Bazalar' },
+    { id: 5, username: 'elima', displayName: 'Elisa Giraldo' },
+    { id: 6, username: 'mauram', displayName: 'Maura Villanueva' },
+    { id: 7, username: 'anamac', displayName: 'Ana Maria Castro' },
+    { id: 8, username: 'carop', displayName: 'Carolina Porras' },
+    { id: 9, username: 'melis', displayName: 'Melissa Sanchez' }
 ];
 
 /** Middleware: EndPoints */
@@ -14,6 +20,15 @@ app.get( '/', ( req = Request, res = Response ) => {
     res.status( 201 ).send( { msg: "Hello, World!" } );
 } );
 app.get( '/api/users', ( req = Request, res = Response ) => {
+    console.log( req.query );
+
+    const { query: { filter, value } } = req;
+
+    if( filter && value ) 
+        return res.send(
+            mockUsers.filter( user => user[ filter ].includes( value ) )
+        );
+
     res.send( mockUsers );
 } );
 app.get( '/api/users/:id', ( req = Request, res = Response ) => {
