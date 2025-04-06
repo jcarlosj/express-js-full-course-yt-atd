@@ -2,13 +2,18 @@
   "name": "expressjs-tutorial",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start:dev": "node --watch ./src/index.mjs",
+    "start": "node --watch ./src/index.mjs"
   },
-  "keywords": [ 
-    "Setup ExpressJS" 
+  "keywords": [
+    "Setup ExpressJS"
   ],
   "author": "Juan Carlos Jiménez Gutiérrez <jcarlosj.dev@gmail.com>",
   "license": "ISC",
-  "description": "ExpressJS Tutorial"
+  "description": "ExpressJS Tutorial",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
 }
