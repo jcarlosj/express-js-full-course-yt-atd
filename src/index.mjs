@@ -15,6 +15,9 @@ const mockUsers = [
     { id: 9, username: 'melis', displayName: 'Melissa Sanchez' }
 ];
 
+/** Middleware: */
+app.use( express.json() );
+
 /** Middleware: EndPoints */
 app.get( '/', ( req = Request, res = Response ) => {
     res.status( 201 ).send( { msg: "Hello, World!" } );
@@ -30,6 +33,20 @@ app.get( '/api/users', ( req = Request, res = Response ) => {
         );
 
     res.send( mockUsers );
+} );
+app.post( '/api/users', ( req = Request, res = Response ) => {
+    console.log( req.body );
+
+    const { body } = req;
+
+    const newUser = {
+        id: mockUsers[ mockUsers.length - 1 ].id + 1,
+        ...body
+    }
+
+    mockUsers.push( newUser );
+
+    return res.status( 201 ).send( newUser );
 } );
 app.get( '/api/users/:id', ( req = Request, res = Response ) => {
     console.log( req.params );
