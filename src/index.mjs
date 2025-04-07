@@ -52,13 +52,31 @@ app.get( '/api/users/:id', ( req = Request, res = Response ) => {
     console.log( req.params );
 
     const parsedId = parseInt( req.params.id );
-    if( isNaN( parsedId ) ) res.status( 400 ).send({ msg: "Bad Request. Invalid Id." });
+    if( isNaN( parsedId ) ) return res.status( 400 ).send({ msg: "Bad Request. Invalid Id." });
 
     const findUser = mockUsers.find( ( user ) => user.id === parsedId );
     if( ! findUser ) return res.sendStatus(404);
 
     return res.send( findUser );
 } );
+app.put( '/api/users/:id', ( req = Request, res = Response ) => {
+    console.log( req.body );
+
+    const { body, params: { id } } = req;
+
+    const parsedId = parseInt( id );
+    if( isNaN( parsedId ) ) return res.status( 400 ).send({ msg: "Bad Request. Invalid Id." });
+
+    const findUserIndex = mockUsers.findIndex( user => user.id === parsedId );
+    if( findUserIndex === -1 ) return res.sendStatus( 404 );
+
+    mockUsers[ findUserIndex ] = {
+        id: parsedId,
+        ...body
+    }
+
+    return res.sendStatus( 200 );
+} );    
 app.get( '/api/products', ( req = Request, res = Response ) => {
     res.send( [
         { id: 1, name: 'Chicken Breast', price: 12.99 }
