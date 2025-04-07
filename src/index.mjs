@@ -21,6 +21,20 @@ const loggingMiddlware = ( req = Request, res = Response, next = Next ) => {
 
     next();
 }
+const resolveIndexByUserId = ( req = Request, res = Response, next = Next ) => {
+    // console.log( req.body );
+
+    const { params: { id } } = req;
+
+    const parsedId = parseInt( id );
+    if( isNaN( parsedId ) ) return res.status( 400 ).send({ msg: "Bad Request. Invalid Id." });
+
+    const findUserIndex = mockUsers.findIndex( user => user.id === parsedId );
+    if( findUserIndex === -1 ) return res.sendStatus( 404 );
+
+    req.findUserIndex = findUserIndex;
+    next();
+}
 
 
 /** Middleware: */
@@ -42,16 +56,9 @@ app.get( '/api/users', ( req = Request, res = Response ) => {
 
     res.send( mockUsers );
 } );
-app.get( '/api/products', ( req = Request, res = Response ) => {
-    res.send( [
-        { id: 1, name: 'Chicken Breast', price: 12.99 }
-    ] );
-} );
 
 app.use( loggingMiddlware );            // Todas las rutas de aqui en adelante harán uso del loggingMiddleware
 app.post( '/api/users', ( req = Request, res = Response ) => {
-    console.log( req.body );
-
     const { body } = req;
 
     const newUser = {
@@ -63,65 +70,43 @@ app.post( '/api/users', ( req = Request, res = Response ) => {
 
     return res.status( 201 ).send( newUser );
 } );
-app.get( '/api/users/:id', ( req = Request, res = Response ) => {
-    console.log( req.params );
-
-    const parsedId = parseInt( req.params.id );
-    if( isNaN( parsedId ) ) return res.status( 400 ).send({ msg: "Bad Request. Invalid Id." });
-
-    const findUser = mockUsers.find( ( user ) => user.id === parsedId );
+app.get( '/api/users/:id', resolveIndexByUserId, ( req = Request, res = Response ) => {
+    const { findUserIndex } = req;
+    const findUser = mockUsers[ findUserIndex ];
+    
     if( ! findUser ) return res.sendStatus(404);
 
     return res.send( findUser );
 } );
-app.put( '/api/users/:id', ( req = Request, res = Response ) => {
-    console.log( req.body );
-
-    const { body, params: { id } } = req;
-
-    const parsedId = parseInt( id );
-    if( isNaN( parsedId ) ) return res.status( 400 ).send({ msg: "Bad Request. Invalid Id." });
-
-    const findUserIndex = mockUsers.findIndex( user => user.id === parsedId );
-    if( findUserIndex === -1 ) return res.sendStatus( 404 );
+app.put( '/api/users/:id', resolveIndexByUserId, ( req = Request, res = Response ) => {
+    const { body, findUserIndex } = req;
 
     mockUsers[ findUserIndex ] = {
-        id: parsedId,
+        id: mockUsers[ findUserIndex ].id,
         ...body
     }
 
     return res.sendStatus( 200 );
 } );
-app.patch( '/api/users/:id', ( req = Request, res = Response ) => {
-    console.log( req.body );
+app.patch( '/api/users/:id', resolveIndexByUserId, ( req = Request, res = Response ) => {
+    const { body, findUserIndex } = req;
 
-    const { body, params: { id } } = req;
-
-    const parsedId = parseInt( id );
-    if( isNaN( parsedId ) ) return res.status( 400 ).send({ msg: "Bad Request. Invalid Id." });
-
-    const findUserIndex = mockUsers.findIndex( user => user.id === parsedId );
-    if( findUserIndex === -1 ) return res.sendStatus( 404 );
-
-    console.log({ ...mockUsers[ findUserIndex ], ...body });
+    // console.log({ ...mockUsers[ findUserIndex ], ...body });
     mockUsers[ findUserIndex ] = { ...mockUsers[ findUserIndex ], ...body };
 
     return res.sendStatus( 200 );
 } );
-app.delete( '/api/users/:id', ( req = Request, res = Response ) => {
-    console.log( req.body );
-
-    const { params: { id } } = req;
-
-    const parsedId = parseInt( id );
-    if( isNaN( parsedId ) ) return res.status( 400 ).send({ msg: "Bad Request. Invalid Id." });
-
-    const findUserIndex = mockUsers.findIndex( user => user.id === parsedId );
-    if( findUserIndex === -1 ) return res.sendStatus( 404 );
+app.delete( '/api/users/:id', resolveIndexByUserId, ( req = Request, res = Response ) => {
+    const { findUserIndex } = req;
 
     mockUsers.splice( findUserIndex, 1 );
 
     return res.sendStatus( 200 );
+} );
+app.get( '/api/products', ( req = Request, res = Response ) => {
+    res.send( [
+        { id: 1, name: 'Chicken Breast', price: 12.99 }
+    ] );
 } );
 
 
