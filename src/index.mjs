@@ -15,6 +15,14 @@ const mockUsers = [
     { id: 9, username: 'melis', displayName: 'Melissa Sanchez' }
 ];
 
+
+const loggingMiddlware = ( req = Request, res = Response, next = Next ) => {
+    console.log( `${ req.method } - ${ req.url }` );
+
+    next();
+}
+
+
 /** Middleware: */
 app.use( express.json() );
 
@@ -34,6 +42,13 @@ app.get( '/api/users', ( req = Request, res = Response ) => {
 
     res.send( mockUsers );
 } );
+app.get( '/api/products', ( req = Request, res = Response ) => {
+    res.send( [
+        { id: 1, name: 'Chicken Breast', price: 12.99 }
+    ] );
+} );
+
+app.use( loggingMiddlware );            // Todas las rutas de aqui en adelante harán uso del loggingMiddleware
 app.post( '/api/users', ( req = Request, res = Response ) => {
     console.log( req.body );
 
@@ -107,11 +122,6 @@ app.delete( '/api/users/:id', ( req = Request, res = Response ) => {
     mockUsers.splice( findUserIndex, 1 );
 
     return res.sendStatus( 200 );
-} );
-app.get( '/api/products', ( req = Request, res = Response ) => {
-    res.send( [
-        { id: 1, name: 'Chicken Breast', price: 12.99 }
-    ] );
 } );
 
 
