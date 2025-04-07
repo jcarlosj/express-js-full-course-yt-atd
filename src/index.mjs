@@ -76,7 +76,23 @@ app.put( '/api/users/:id', ( req = Request, res = Response ) => {
     }
 
     return res.sendStatus( 200 );
-} );    
+} );
+app.patch( '/api/users/:id', ( req = Request, res = Response ) => {
+    console.log( req.body );
+
+    const { body, params: { id } } = req;
+
+    const parsedId = parseInt( id );
+    if( isNaN( parsedId ) ) return res.status( 400 ).send({ msg: "Bad Request. Invalid Id." });
+
+    const findUserIndex = mockUsers.findIndex( user => user.id === parsedId );
+    if( findUserIndex === -1 ) return res.sendStatus( 404 );
+
+    console.log({ ...mockUsers[ findUserIndex ], ...body });
+    mockUsers[ findUserIndex ] = { ...mockUsers[ findUserIndex ], ...body };
+
+    return res.sendStatus( 200 );
+} );
 app.get( '/api/products', ( req = Request, res = Response ) => {
     res.send( [
         { id: 1, name: 'Chicken Breast', price: 12.99 }
