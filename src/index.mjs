@@ -3,6 +3,7 @@ import { query, validationResult, matchedData } from 'express-validator';
 import { createUserValidationSchema } from './utils/create-user-validation.schema.mjs';
 
 import mockUsers from './mocks/users.mock.mjs';
+import { filterUsersSchema } from './utils/filter-users-validation.schema.mjs';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -40,18 +41,7 @@ app.get( '/', ( req = Request, res = Response ) => {
 const allowedFilters = ['username', 'displayName'];
 app.get( 
     '/api/users', 
-    [
-        /** Valida el parámetro de consulta 'filter' (nombre de las propiedades sobre las que se realizará la búsqueda) */
-        query( 'filter' )
-            .trim()
-            .optional()
-            .isString(), 
-        /** Valida el parámetro de consulta 'value' (valor de la propiedad sobre la que se realiza la búsqueda) */
-        query( 'value' )
-            .trim()
-            .optional() // porque podrías permitir que falte y devuelvas todos los usuarios
-            .isString().withMessage( 'Value must be a string' )
-    ],
+    filterUsersSchema,
     ( req = Request, res = Response ) => {
         console.log( req[ 'express-validator#contexts' ] );
         // console.log( req.query );
