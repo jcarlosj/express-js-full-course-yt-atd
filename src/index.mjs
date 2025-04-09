@@ -1,5 +1,5 @@
 import express, { response } from 'express';
-import { query, validationResult } from 'express-validator';
+import { query, body, validationResult, matchedData } from 'express-validator';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -74,18 +74,34 @@ app.get(
 );
 
 app.use( loggingMiddlware );            // Todas las rutas de aqui en adelante harán uso del loggingMiddleware
-app.post( '/api/users', ( req = Request, res = Response ) => {
-    const { body } = req;
+app.post( 
+    '/api/users', 
+    body( 'username' )
+        .notEmpty().withMessage( 'Username cannot be empty' )
+        .isLength({ min: 5, max: 32 }).withMessage( 'Username must be at least 5 characters with a max of 32 characters' )
+        .isString().withMessage( 'Usename must be a string' ),
+    body( 'displayName' ).notEmpty().withMessage( 'displayName cannot be empty' ),
+    ( req = Request, res = Response ) => {
+        const { body } = req;
+        
+        const errors = validationResult( req );
+        console.log( errors );
+        if ( ! errors.isEmpty() ) {
+            return res.status( 400 ).json({ errors: errors.array() });
+        }
 
-    const newUser = {
-        id: mockUsers[ mockUsers.length - 1 ].id + 1,
-        ...body
-    }
+        const dataBody = matchedData( req );
 
-    mockUsers.push( newUser );
+        const newUser = {
+            id: mockUsers[ mockUsers.length - 1 ].id + 1,
+            ...dataBody
+        }
 
-    return res.status( 201 ).send( newUser );
-} );
+        mockUsers.push( newUser );
+
+        return res.status( 201 ).send( newUser );
+    } 
+);
 app.get( '/api/users/:id', resolveIndexByUserId, ( req = Request, res = Response ) => {
     const { findUserIndex } = req;
     const findUser = mockUsers[ findUserIndex ];
