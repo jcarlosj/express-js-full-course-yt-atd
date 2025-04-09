@@ -1,4 +1,5 @@
 import express, { response } from 'express';
+import { query, validationResult } from 'express-validator';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -44,18 +45,33 @@ app.use( express.json() );
 app.get( '/', ( req = Request, res = Response ) => {
     res.status( 201 ).send( { msg: "Hello, World!" } );
 } );
-app.get( '/api/users', ( req = Request, res = Response ) => {
-    console.log( req.query );
+app.get( 
+    '/api/users', 
+    /** Valida el parámetro de consulta 'filter' */
+    query( 'filter' )
+        .isString().withMessage( 'Must be a string' )
+        .notEmpty().withMessage( 'Must not be empty' )
+        .isLength({ min: 3, max: 10 }).withMessage( 'Must be at least 3-10 characters' ), 
+    ( req = Request, res = Response ) => {
+        console.log( req[ 'express-validator#contexts' ] );
+        // console.log( req.query );
 
-    const { query: { filter, value } } = req;
+        const errors = validationResult( req );
+        console.log( errors );
+        if ( ! errors.isEmpty() ) {
+            return res.status( 400 ).json({ errors: errors.array() });
+        }
 
-    if( filter && value ) 
-        return res.send(
-            mockUsers.filter( user => user[ filter ].includes( value ) )
-        );
+        const { query: { filter, value } } = req;
 
-    res.send( mockUsers );
-} );
+        if( filter && value ) 
+            return res.send(
+                mockUsers.filter( user => user[ filter ].includes( value ) )
+            );
+
+        res.send( mockUsers );
+    } 
+);
 
 app.use( loggingMiddlware );            // Todas las rutas de aqui en adelante harán uso del loggingMiddleware
 app.post( '/api/users', ( req = Request, res = Response ) => {
