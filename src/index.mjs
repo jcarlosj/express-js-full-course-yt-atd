@@ -45,13 +45,22 @@ app.use( express.json() );
 app.get( '/', ( req = Request, res = Response ) => {
     res.status( 201 ).send( { msg: "Hello, World!" } );
 } );
+
+const allowedFilters = ['username', 'displayName'];
 app.get( 
     '/api/users', 
-    /** Valida el parámetro de consulta 'filter' */
-    query( 'filter' )
-        .isString().withMessage( 'Must be a string' )
-        .notEmpty().withMessage( 'Must not be empty' )
-        .isLength({ min: 3, max: 10 }).withMessage( 'Must be at least 3-10 characters' ), 
+    [
+        /** Valida el parámetro de consulta 'filter' (nombre de las propiedades sobre las que se realizará la búsqueda) */
+        query( 'filter' )
+            .trim()
+            .optional()
+            .isString(), 
+        /** Valida el parámetro de consulta 'value' (valor de la propiedad sobre la que se realiza la búsqueda) */
+        query( 'value' )
+            .trim()
+            .optional() // porque podrías permitir que falte y devuelvas todos los usuarios
+            .isString().withMessage( 'Value must be a string' )
+    ],
     ( req = Request, res = Response ) => {
         console.log( req[ 'express-validator#contexts' ] );
         // console.log( req.query );
@@ -62,12 +71,22 @@ app.get(
             return res.status( 400 ).json({ errors: errors.array() });
         }
 
-        const { query: { filter, value } } = req;
+        // Extraemos solo los campos que fueron validados exitosamente, los sanitiza e ignora campos adicionales, manipulados por el cliente, en este caso del query
+        const { filter, value } = matchedData( req, { locations: [ 'query' ] });
 
-        if( filter && value ) 
+        /**
+         * filter: hace referencia al campo de busqueda
+         * value: el termino de busqueda esperado
+         */
+        console.log({ filter, value });
+
+        if ( filter?.trim() && value?.trim() && allowedFilters.includes( filter ) ) {
             return res.send(
-                mockUsers.filter( user => user[ filter ].includes( value ) )
+                mockUsers.filter( user =>
+                    user[ filter ].toLowerCase().includes( value.toLowerCase() )
+                )
             );
+        }
 
         res.send( mockUsers );
     } 
@@ -76,11 +95,25 @@ app.get(
 app.use( loggingMiddlware );            // Todas las rutas de aqui en adelante harán uso del loggingMiddleware
 app.post( 
     '/api/users', 
-    body( 'username' )
-        .notEmpty().withMessage( 'Username cannot be empty' )
-        .isLength({ min: 5, max: 32 }).withMessage( 'Username must be at least 5 characters with a max of 32 characters' )
-        .isString().withMessage( 'Usename must be a string' ),
-    body( 'displayName' ).notEmpty().withMessage( 'displayName cannot be empty' ),
+    [
+        body( 'username' )
+            .trim()
+            .notEmpty().withMessage( 'Username is required' )
+            .isLength({ min: 5, max: 32 }).withMessage( 'Username must be at least 5 characters with a max of 32 characters' )
+            .isAlphanumeric().withMessage( 'Username must contain only letters and numbers' )
+            .custom( value => {
+                const exists = mockUsers.some( user => user.username === value );
+                if ( exists ) {
+                    throw new Error( 'Username already exists' );
+                }
+
+                return true;
+            }),
+        body( 'displayName' )
+            .notEmpty().withMessage( 'Display name is required' )
+            .isString().withMessage( 'Display name must be a string' )
+            .isLength({ max: 50 }).withMessage( 'Display name must be at most 50 characters' )
+    ],
     ( req = Request, res = Response ) => {
         const { body } = req;
         
