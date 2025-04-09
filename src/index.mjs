@@ -1,20 +1,11 @@
 import express, { response } from 'express';
-import { query, body, validationResult, matchedData } from 'express-validator';
+import { query, validationResult, matchedData } from 'express-validator';
+import { createUserValidationSchema } from './utils/create-user-validation.schema.mjs';
+
+import mockUsers from './mocks/users.mock.mjs';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-const mockUsers = [
-    { id: 1, username: 'manug', displayName: 'Manuela Gomez' },
-    { id: 2, username: 'julip', displayName: 'Juliana Puerta' },
-    { id: 3, username: 'caror', displayName: 'Carolina Rojas' },
-    { id: 4, username: 'malu', displayName: 'Luisa Bazalar' },
-    { id: 5, username: 'elima', displayName: 'Elisa Giraldo' },
-    { id: 6, username: 'mauram', displayName: 'Maura Villanueva' },
-    { id: 7, username: 'anamac', displayName: 'Ana Maria Castro' },
-    { id: 8, username: 'carop', displayName: 'Carolina Porras' },
-    { id: 9, username: 'melis', displayName: 'Melissa Sanchez' }
-];
 
 
 const loggingMiddlware = ( req = Request, res = Response, next = Next ) => {
@@ -95,25 +86,7 @@ app.get(
 app.use( loggingMiddlware );            // Todas las rutas de aqui en adelante harán uso del loggingMiddleware
 app.post( 
     '/api/users', 
-    [
-        body( 'username' )
-            .trim()
-            .notEmpty().withMessage( 'Username is required' )
-            .isLength({ min: 5, max: 32 }).withMessage( 'Username must be at least 5 characters with a max of 32 characters' )
-            .isAlphanumeric().withMessage( 'Username must contain only letters and numbers' )
-            .custom( value => {
-                const exists = mockUsers.some( user => user.username === value );
-                if ( exists ) {
-                    throw new Error( 'Username already exists' );
-                }
-
-                return true;
-            }),
-        body( 'displayName' )
-            .notEmpty().withMessage( 'Display name is required' )
-            .isString().withMessage( 'Display name must be a string' )
-            .isLength({ max: 50 }).withMessage( 'Display name must be at most 50 characters' )
-    ],
+    createUserValidationSchema,
     ( req = Request, res = Response ) => {
         const { body } = req;
         
