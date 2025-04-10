@@ -6,7 +6,6 @@ import { filterUsersSchema } from '../utils/filter-users-validation.schema.mjs';
 import { resolveIndexByUserId } from '../middlewares/resolve-index-by-user-id.middleware.mjs';
 import { loggingMiddlware } from '../middlewares/logging.middleware.mjs';
 
-import mockUsers from '../mocks/users.mock.mjs';
 import userController from '../controllers/user.controller.mjs';
 
 const router = Router();
