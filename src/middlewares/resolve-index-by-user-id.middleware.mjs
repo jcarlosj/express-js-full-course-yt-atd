@@ -1,3 +1,5 @@
+import mockUsers from "../mocks/users.mock.mjs";
+
 const resolveIndexByUserId = ( req = Request, res = Response, next = Next ) => {
     // console.log( req.body );
 
