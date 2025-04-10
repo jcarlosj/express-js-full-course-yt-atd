@@ -93,7 +93,7 @@ const deleteUserById = ( req = Request, res = Response ) => {
 }
 
 
-export {
+export default {
     getUsers,
     createUser,
     getUserById,

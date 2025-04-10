@@ -7,20 +7,20 @@ import { resolveIndexByUserId } from '../middlewares/resolve-index-by-user-id.mi
 import { loggingMiddlware } from '../middlewares/logging.middleware.mjs';
 
 import mockUsers from '../mocks/users.mock.mjs';
-import { createUser, deleteUserById, getUserById, getUsers, partialUpdateUserById, totalUserUpdateById } from '../controllers/user.controller.mjs';
+import userController from '../controllers/user.controller.mjs';
 
 const router = Router();
 
 /** Define rutas para usuario */
-router.get( '/api/users', filterUsersSchema, getUsers );
+router.get( '/api/users', filterUsersSchema, userController.getUsers );
 
 router.use( loggingMiddlware );            // Todas las rutas de aqui en adelante harán uso del loggingMiddleware
 
-router.post( '/api/users', createUserValidationSchema,  createUser );
-router.patch( '/api/users/:id', resolveIndexByUserId, partialUpdateUserById );
-router.get( '/api/users/:id', resolveIndexByUserId, getUserById );
-router.put( '/api/users/:id', resolveIndexByUserId, totalUserUpdateById );
-router.delete( '/api/users/:id', resolveIndexByUserId, deleteUserById );
+router.post( '/api/users', createUserValidationSchema,  userController.createUser );
+router.patch( '/api/users/:id', resolveIndexByUserId, userController.partialUpdateUserById );
+router.get( '/api/users/:id', resolveIndexByUserId, userController.getUserById );
+router.put( '/api/users/:id', resolveIndexByUserId, userController.totalUserUpdateById );
+router.delete( '/api/users/:id', resolveIndexByUserId, userController.deleteUserById );
 
 
 export default router;
