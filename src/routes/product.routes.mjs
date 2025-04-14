@@ -8,9 +8,13 @@ router.get( '/api/products', ( req = Request, res = Response ) => {
     console.log( 'Native: ', req.headers.cookie );
     console.log( 'CookieParser: ', req.cookies );
 
-    res.send( [
-        { id: 1, name: 'Chicken Breast', price: 12.99 }
-    ] );
+    // Verifica si el valor de la propiedad greeting en la cookie es el esperado
+    if( req.cookies.greeting && req.cookies.greeting === 'Hello, World!' )
+        return res.send( [
+            { id: 1, name: 'Chicken Breast', price: 12.99 }
+        ] );
+
+    return res.send({ msg: 'Sorry. You need the correct cookie' });
 } );
 
 export default router;
