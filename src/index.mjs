@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 
 /** Middleware: */
 app.use( express.json() );
-app.use( cookieParser() );
+app.use( cookieParser( 'Er45gfdg74fd' ) );      // Se pasa palabra secreta o semilla
 
 /** Principal EndPoints */
 app.use( routes );

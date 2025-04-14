@@ -6,10 +6,12 @@ const router = Router();
 router.get( '/', ( req = Request, res = Response ) => {
     /** Creamos una cookie */
     res.cookie( 'greeting', 'Hello, World!', {
-        // httpOnly: true,                 // solo accesible desde el servidor
-        maxAge: 24 * 60 * 60 * 1000,    // 1 día
+        // httpOnly: true,                 // Solo accesible desde el servidor
+        // maxAge: 24 * 60 * 60 * 1000,    // 1 día
+        maxAge: 10000,                     // 10 segundos
         // secure: false,                  // true si usas HTTPS
-        // sameSite: 'strict'              // evita envío en cross-site requests
+        // sameSite: 'strict',             // Evita envío en cross-site requests
+        signed: true                       // Requiere palabra secreta o semilla
     } );
 
     res.status( 201 ).send( { msg: "Cookie creada" } );
