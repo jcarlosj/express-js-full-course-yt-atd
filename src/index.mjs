@@ -1,4 +1,5 @@
 import express, { response } from 'express';
+import cookieParser from 'cookie-parser';
 
 import routes from './routes/index.routes.mjs';
 
@@ -8,6 +9,7 @@ const PORT = process.env.PORT || 3000;
 
 /** Middleware: */
 app.use( express.json() );
+app.use( cookieParser() );
 
 /** Principal EndPoints */
 app.use( routes );
