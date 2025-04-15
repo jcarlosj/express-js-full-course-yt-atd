@@ -4,6 +4,10 @@ const router = Router();
 
 /** Define rutas principales */
 router.get( '/', ( req = Request, res = Response ) => {
+    /** Sessions */
+    console.log( 'SessionExpress: ', req.session );
+    console.log( 'SessionID: ', req.session.id, req.sessionID );
+
     /** Creamos una cookie */
     res.cookie( 'greeting', 'Hello, World!', {
         // httpOnly: true,                 // Solo accesible desde el servidor
