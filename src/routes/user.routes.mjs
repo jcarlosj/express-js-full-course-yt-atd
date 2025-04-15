@@ -16,6 +16,7 @@ router.get( '/api/users', filterUsersSchema, userController.getUsers );
 router.use( loggingMiddlware );            // Todas las rutas de aqui en adelante harán uso del loggingMiddleware
 
 router.post( '/api/users', createUserValidationSchema,  userController.createUser );
+router.get( '/api/users', filterUsersSchema, userController.getUsers );
 router.patch( '/api/users/:id', resolveIndexByUserId, userController.partialUpdateUserById );
 router.get( '/api/users/:id', resolveIndexByUserId, userController.getUserById );
 router.put( '/api/users/:id', resolveIndexByUserId, userController.totalUserUpdateById );

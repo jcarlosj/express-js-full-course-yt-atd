@@ -8,6 +8,22 @@ const getUsers = ( req = Request, res = Response ) => {
     console.log( req[ 'express-validator#contexts' ] );
     // console.log( req.query );
 
+    /** Sessions */
+    console.log( 'Session Express: ', req.session );                                    // Muestra los Datos procesados por Express
+    console.log( 'Session ID: ', req.session.id, req.sessionID );                       // Muestra el ID de sesion
+    console.log( 'Session modified?', !!req.session.visited );                          // Muestra datos personalizados
+    console.log( 'Cookie sent?', req.headers.cookie?.includes( 'connect.sid' ) );       // Muestra la cookie de sesion almacenada en las cabeceras
+    
+    /** Muestra el último estado de los datos guardado en la sesion */
+    req.sessionStore.get( req.session.id, ( err, sessionData ) => {
+        if ( err ) {
+            console.error( err );
+            throw err;
+        }
+
+        console.log( 'sessionStore (data): ', sessionData );
+    } );
+
     const errors = validationResult( req );
     console.log( errors );
     if ( ! errors.isEmpty() ) {
