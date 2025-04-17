@@ -29,7 +29,7 @@ const statusUser = ( req = Request, res = Response ) => {
             throw err;
         }
 
-        console.log( 'sessionStore (data): ', sessionData );                            // Muestra los datos almacenados en el store (Sin procesar por Express)
+        console.log( 'sessionStore (user): ', sessionData );                            // Muestra los datos almacenados en el store (Sin procesar por Express)
     } );
 
     return req.session.user
