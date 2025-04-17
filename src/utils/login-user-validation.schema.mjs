@@ -2,7 +2,7 @@ import { checkSchema } from "express-validator";
 
 import mockUsers from '../mocks/users.mock.mjs';
 
-export const createUserValidationSchema = checkSchema({
+export const loginUserValidationSchema = checkSchema({
     username: {
         in: [ 'body' ],
         trim: true,
@@ -20,8 +20,8 @@ export const createUserValidationSchema = checkSchema({
             options: ( value ) => {
                 const exists = mockUsers.some( user => user.username === value );
 
-                if ( exists ) {
-                    throw new Error( 'Username already exists' );
+                if ( ! exists ) {
+                    throw new Error( 'Username does not exist' );
                 }
                 return true;
             },
@@ -39,19 +39,6 @@ export const createUserValidationSchema = checkSchema({
         },
         isAlphanumeric: {
             errorMessage: 'Password must contain only letters and numbers',
-        }
-    },
-    displayName: {
-        in: [ 'body' ],
-        notEmpty: {
-            errorMessage: 'Display name is required',
-        },
-        isString: {
-            errorMessage: 'Display name must be a string',
-        },
-        isLength: {
-            options: { max: 50 },
-            errorMessage: 'Display name must be at most 50 characters',
         }
     }
 });

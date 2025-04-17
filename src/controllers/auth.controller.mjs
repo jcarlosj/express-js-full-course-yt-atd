@@ -1,11 +1,16 @@
+import { matchedData, validationResult } from "express-validator";
 import mockUsers from "../mocks/users.mock.mjs";
 
 
 const loginUser = ( req = Request, res = Response ) => {
-    const { body: { username, password } } = req;
+    
+    const errors = validationResult( req );
+    console.log( errors );
+    if ( ! errors.isEmpty() ) {
+        return res.status( 400 ).json({ errors: errors.array() });
+    }
 
-    // TODO: Validate body using express-validator
-
+    const { username, password } = matchedData( req );
 
     const findUser = mockUsers.find( user => user.username === username );
     if( ! findUser || findUser.password !== password )
