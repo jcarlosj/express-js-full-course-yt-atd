@@ -6,10 +6,11 @@ import passport from 'passport';
 import './strategies/local.strategy.mjs';
 
 import routes from './routes/index.routes.mjs';
-
+import dbConnect from './config/mongodb.config.mjs';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
 
 
 /** Middleware: */
@@ -31,6 +32,8 @@ app.use( passport.session() );                  // Habilita sesiones persistente
 /** Principal EndPoints */
 app.use( routes );
 
+/** Launch Database */
+dbConnect();
 
 /** Launch Server using ExpressJS */
 app.listen( PORT, () => {
