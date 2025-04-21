@@ -6,6 +6,17 @@ const insertUser = async ( newUserData ) => {
     return await newUser.save();
 }
 
+const findUserByUsername = async ( username ) => {
+    return await UserModel.findOne({ username });
+}
+
+const findUserById = async ( _id ) => {
+    return await UserModel.findById( _id );
+}
+
+
 export default {
-    insertUser
+    insertUser,
+    findUserByUsername,
+    findUserById
 }
