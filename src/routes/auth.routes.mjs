@@ -19,14 +19,26 @@ router.post(
     passport.authenticate( 'local' ), 
     ( req = Request, res = Response ) => {
         // Si la autenticación fue exitosa, req.user contendrá el usuario
-        res.json({ 
-            message: 'Autenticación exitosa',
-            user: req.user 
-        });
+
+        /** Muestra el último estado de los datos guardado en la sesion */
+        req.sessionStore.get( req.session.id, ( err, sessionData ) => {
+            if ( err ) {
+                console.error( err );
+                throw err;
+            }
+
+            console.log( 'sessionStore (user): ', sessionData );                            // Muestra los datos almacenados en el store (Sin procesar por Express)
+        } );
+
+        res.sendStatus( 200 );
+        // res.json({ 
+        //     message: 'Autenticación exitosa',
+        //     user: req.user 
+        // });
     } 
 );
 router.get( '/api/auth/status', authController.statusUser );
 
-
+router.post( '/api/auth/logout', authController.logoutUser );
 
 export default router;

@@ -23,22 +23,43 @@ const loginUser = ( req = Request, res = Response ) => {
 
 const statusUser = ( req = Request, res = Response ) => {
     /** Muestra el último estado de los datos guardado en la sesion */
-    req.sessionStore.get( req.session.id, ( err, sessionData ) => {
-        if ( err ) {
-            console.error( err );
-            throw err;
-        }
+    // req.sessionStore.get( req.session.id, ( err, sessionData ) => {
+    //     if ( err ) {
+    //         console.error( err );
+    //         throw err;
+    //     }
 
-        console.log( 'sessionStore (user): ', sessionData );                            // Muestra los datos almacenados en el store (Sin procesar por Express)
-    } );
+    //     console.log( 'sessionStore (user): ', sessionData );                            // Muestra los datos almacenados en el store (Sin procesar por Express)
+    // } );
 
-    return req.session.user
-                ?   res.status( 200 ).send( req.session.user )
-                :   res.status( 401 ).send({ msg: 'Not Authenticated' });
+    console.log( req.user );
+    console.log( req.session );
+    return req.user ? res.send( req.user ) : res.sendStatus( 401 );
+
+
+    // return req.session.user
+    //             ?   res.status( 200 ).send( req.session.user )
+    //             :   res.status( 401 ).send({ msg: 'Not Authenticated' });
+
+    
+}
+
+
+const logoutUser = ( req = Request, res = Response ) => {
+    if( ! req.user )
+        return res.sendStatus( 401 );
+
+    req.logout( error => {
+        if( error )
+            return res.sendStatus( 400 );
+
+        res.send( 200 );
+    });
 }
 
 
 export default {
     loginUser,
-    statusUser
+    statusUser,
+    logoutUser
 }
