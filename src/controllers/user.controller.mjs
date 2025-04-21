@@ -1,6 +1,7 @@
 import { matchedData, validationResult } from "express-validator";
 
 import mockUsers from "../mocks/users.mock.mjs";
+import UserService from '../services/user.service.mjs';
 
 const allowedFilters = [ 'username', 'displayName' ];
 
@@ -50,7 +51,7 @@ const getUsers = ( req = Request, res = Response ) => {
     res.send( mockUsers );
 }
 
-const createUser = ( req = Request, res = Response ) => {
+const createUser = async ( req = Request, res = Response ) => {
     const { body } = req;
     
     const errors = validationResult( req );
@@ -61,14 +62,15 @@ const createUser = ( req = Request, res = Response ) => {
 
     const dataBody = matchedData( req );
 
-    const newUser = {
-        id: mockUsers[ mockUsers.length - 1 ].id + 1,
-        ...dataBody
+    try {
+        const newUser = await UserService.insertUser( dataBody );
+
+        return res.status( 201 ).send( newUser );
+    } 
+    catch ( error ) {
+        console.error( error );
+        res.sendStatus( 400 );
     }
-
-    mockUsers.push( newUser );
-
-    return res.status( 201 ).send( newUser );
 } 
 
 const getUserById = ( req = Request, res = Response ) => {
