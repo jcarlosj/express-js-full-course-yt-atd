@@ -1,8 +1,12 @@
 import express, { response } from 'express';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
+import passport from 'passport';
+
+import './strategies/local.strategy.mjs';
 
 import routes from './routes/index.routes.mjs';
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,6 +23,10 @@ app.use( session({
         maxAge: 60000 * 60,                     // Tiempo de expiración - 1 hora
     }
 }));
+app.use( passport.initialize() );               // Inicializa Passport para autenticación usando Express
+app.use( passport.session() );                  // Habilita sesiones persistentes de login
+
+
 
 /** Principal EndPoints */
 app.use( routes );
