@@ -3,7 +3,8 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import passport from 'passport';
 
-import './strategies/local.strategy.mjs';
+// TODO: Separar las estrategias de manera que no choque una con la otra
+// import './strategies/local.strategy.mjs';
 import './strategies/discord.strategy.mjs';
 
 import routes from './routes/index.routes.mjs';

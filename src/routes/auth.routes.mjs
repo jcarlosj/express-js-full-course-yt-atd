@@ -42,16 +42,21 @@ router.get(
     '/api/auth/discord', 
     passport.authenticate( 'discord' )
 );
-router.get( 
-    '/api/auth/discord/redirect', 
-    passport.authenticate( 'discord' ),
-    ( req = Request, res = Response ) => {
-        res.sendStatus( 200 );
-    }
-);
 
 router.get( '/api/auth/status', authController.statusUser );
 
 router.post( '/api/auth/logout', authController.logoutUser );
+
+router.get( 
+    '/api/auth/discord/redirect', 
+    passport.authenticate( 'discord' ),
+    ( req = Request, res = Response ) => {
+        console.log( req.session );
+        console.log( req.session.id );
+        console.log( req.user );
+
+        res.sendStatus( 200 );
+    }
+);
 
 export default router;

@@ -49,3 +49,32 @@ export default passport.use(
 
     })
 )
+
+/**
+ * Configuración de serialización del usuario
+ * Determina qué datos del usuario se almacenan en la sesión
+ */
+passport.serializeUser( ( user, done ) => {
+    console.error( 'serializeUser: ', user );
+    done( null, user._id );                      // Solo almacenamos el ID en la sesión (Debe pasarse un valor unico que identifique al usuario)
+});
+
+/**
+ * Configuración de deserialización del usuario
+ * Recupera los datos completos del usuario a partir del ID almacenado
+ */
+passport.deserializeUser( async ( id, done ) => {
+    console.error( 'deserializeUser: ', id );
+    try {
+        // Busca el usuario en la base de datos
+        const findUser = await DiscordUserModel.findById( id );
+        
+        return findUser 
+            ?   done( null, findUser )
+            :   done( null, null );    
+    } 
+    catch (error) {
+        done( error, null );
+    }
+    
+});
