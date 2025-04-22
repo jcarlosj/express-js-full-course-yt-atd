@@ -4,6 +4,7 @@ import session from 'express-session';
 import passport from 'passport';
 
 import './strategies/local.strategy.mjs';
+import './strategies/discord.strategy.mjs';
 
 import routes from './routes/index.routes.mjs';
 import dbConnect from './config/mongodb.config.mjs';
