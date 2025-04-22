@@ -2,6 +2,7 @@ import { matchedData, validationResult } from "express-validator";
 
 import mockUsers from "../mocks/users.mock.mjs";
 import UserService from '../services/user.service.mjs';
+import { hashPassword } from "../utils/bcrypt.helper.mjs";
 
 const allowedFilters = [ 'username', 'displayName' ];
 
@@ -61,6 +62,7 @@ const createUser = async ( req = Request, res = Response ) => {
     }
 
     const dataBody = matchedData( req );
+    dataBody.password = hashPassword( dataBody.password );      // Encripta la contraseña
 
     try {
         const newUser = await UserService.insertUser( dataBody );
