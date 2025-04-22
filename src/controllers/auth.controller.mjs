@@ -34,6 +34,7 @@ const statusUser = ( req = Request, res = Response ) => {
 
     console.log( req.user );
     console.log( req.session );
+    console.log( req.sessionID );
     return req.user ? res.send( req.user ) : res.sendStatus( 401 );
 
 
