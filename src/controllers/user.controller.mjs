@@ -53,14 +53,14 @@ const getUsers = ( req = Request, res = Response ) => {
 }
 
 const createUser = async ( req = Request, res = Response ) => {
-    const { body } = req;
-    
+    /** Valida Resultado Middleware 'express-validator', createUserValidationSchema */
     const errors = validationResult( req );
     console.log( errors );
     if ( ! errors.isEmpty() ) {
         return res.status( 400 ).json({ errors: errors.array() });
     }
 
+    /** Extrae solo los campos validos en los que hace match definidos en createUserValidationSchema */
     const dataBody = matchedData( req );
     dataBody.password = hashPassword( dataBody.password );      // Encripta la contraseña
 

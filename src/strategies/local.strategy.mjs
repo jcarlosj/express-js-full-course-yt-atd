@@ -1,7 +1,8 @@
 import passport from 'passport';
 import { Strategy } from 'passport-local';
-import mockUsers from '../mocks/users.mock.mjs';
+
 import UserService from '../services/user.service.mjs';
+import { comparePassword } from '../utils/bcrypt.helper.mjs';
 
 /** Configure Strategy */
 export default passport.use(
@@ -19,7 +20,7 @@ export default passport.use(
                     throw new Error( 'User not found' );
 
                 // Contraseña incorrecta
-                if( findUser.password !== password )
+                if( ! comparePassword( password, findUser.password ) )
                     throw new Error( 'Invalid credentials' );
 
                 // Autenticación exitosa
